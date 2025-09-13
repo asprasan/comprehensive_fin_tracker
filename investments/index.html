@@ -1,1 +1,483 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Investment Tracker</title>
+    <link rel="stylesheet" href="inv_style.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <div class="app">
+        <!-- Header -->
+        <header class="header">
+            <div class="container">
+                <div class="header__content">
+                    <div class="header__title">
+                        <h1>Investment Tracker</h1>
+                        <div class="header__date" id="currentDate"></div>
+                    </div>
+                    <div class="header__controls">
+                        <div class="currency-display">
+                            <span class="currency-rate" id="currencyRate">1 EUR = ₹103.33</span>
+                        </div>
+                        <button class="btn btn--sm btn--outline" id="themeToggle">
+                            <span id="themeIcon">🌙</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </header>
 
+        <!-- Navigation -->
+        <nav class="nav">
+            <div class="container">
+                <div class="nav__tabs">
+                    <button class="nav__tab nav__tab--active" data-tab="portfolio">Portfolio</button>
+                    <button class="nav__tab" data-tab="add-investment">Add Investment</button>
+                    <button class="nav__tab" data-tab="goals">Goals</button>
+                    <button class="nav__tab" data-tab="analytics">Analytics</button>
+                    <button class="nav__tab" data-tab="settings">Settings</button>
+                </div>
+            </div>
+        </nav>
+
+        <!-- Main Content -->
+        <main class="main">
+            <div class="container">
+                
+                <!-- Portfolio Tab -->
+                <div class="tab-content tab-content--active" id="portfolio-tab">
+                    <div class="portfolio-summary">
+                        <div class="summary-cards">
+                            <div class="card summary-card">
+                                <div class="card__body">
+                                    <h3>Total Invested</h3>
+                                    <div class="summary-amount" id="totalInvested">₹0</div>
+                                </div>
+                            </div>
+                            <div class="card summary-card">
+                                <div class="card__body">
+                                    <h3>Equity Allocation</h3>
+                                    <div class="summary-amount" id="equityAllocation">₹0</div>
+                                    <div class="summary-percentage" id="equityPercentage">0%</div>
+                                </div>
+                            </div>
+                            <div class="card summary-card">
+                                <div class="card__body">
+                                    <h3>Debt Allocation</h3>
+                                    <div class="summary-amount" id="debtAllocation">₹0</div>
+                                    <div class="summary-percentage" id="debtPercentage">0%</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="portfolio-actions">
+                        <button class="btn btn--primary" id="quickAddInvestment">+ Add Investment</button>
+                        <div class="filters">
+                            <select class="form-control" id="goalFilter">
+                                <option value="">All Goals</option>
+                            </select>
+                            <select class="form-control" id="typeFilter">
+                                <option value="">All Types</option>
+                                <option value="Equity">Equity</option>
+                                <option value="Debt">Debt</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="investments-table">
+                        <div class="card">
+                            <div class="card__header">
+                                <h3>Recent Investments</h3>
+                            </div>
+                            <div class="table-container">
+                                <table class="table" id="investmentsTable">
+                                    <thead>
+                                        <tr>
+                                            <th>Date</th>
+                                            <th>Amount</th>
+                                            <th>Type</th>
+                                            <th>Fund</th>
+                                            <th>Goal</th>
+                                            <th>Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="investmentsTableBody">
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Add Investment Tab -->
+                <div class="tab-content" id="add-investment-tab">
+                    <div class="investment-form-container">
+                        <div class="card">
+                            <div class="card__header">
+                                <h3>Add New Investment</h3>
+                            </div>
+                            <div class="card__body">
+                                <form id="investmentForm" class="investment-form">
+                                    <div class="form-row">
+                                        <div class="form-group">
+                                            <label class="form-label">Date</label>
+                                            <input type="date" class="form-control" id="investmentDate" required>
+                                        </div>
+                                        <div class="form-group">
+                                            <label class="form-label">Currency</label>
+                                            <select class="form-control" id="investmentCurrency" required>
+                                                <option value="INR">INR (₹)</option>
+                                                <option value="EUR">EUR (€)</option>
+                                            </select>
+                                        </div>
+                                    </div>
+
+                                    <div class="form-row">
+                                        <div class="form-group">
+                                            <label class="form-label">Amount</label>
+                                            <input type="number" class="form-control" id="investmentAmount" placeholder="0.00" min="0" step="0.01" required>
+                                        </div>
+                                        <div class="form-group">
+                                            <label class="form-label">Amount in INR</label>
+                                            <input type="text" class="form-control" id="amountInINR" readonly>
+                                        </div>
+                                    </div>
+
+                                    <div class="form-row">
+                                        <div class="form-group">
+                                            <label class="form-label">Investment Type</label>
+                                            <select class="form-control" id="investmentType" required>
+                                                <option value="">Select Type</option>
+                                                <option value="Equity">Equity</option>
+                                                <option value="Debt">Debt</option>
+                                            </select>
+                                        </div>
+                                        <div class="form-group">
+                                            <label class="form-label">Goal</label>
+                                            <select class="form-control" id="investmentGoal" required>
+                                                <option value="">Select Goal</option>
+                                            </select>
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label class="form-label">Fund Name</label>
+                                        <input type="text" class="form-control" id="fundName" placeholder="Enter fund name" list="fundSuggestions" required>
+                                        <datalist id="fundSuggestions"></datalist>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label class="form-label">Notes (Optional)</label>
+                                        <textarea class="form-control" id="investmentNotes" rows="3" placeholder="Add any notes about this investment"></textarea>
+                                    </div>
+
+                                    <div class="form-actions">
+                                        <button type="submit" class="btn btn--primary">Add Investment</button>
+                                        <button type="button" class="btn btn--secondary" id="clearForm">Clear Form</button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Goals Tab -->
+                <div class="tab-content" id="goals-tab">
+                    <div class="goals-header">
+                        <h2>Investment Goals</h2>
+                        <button class="btn btn--primary" id="addGoalBtn">+ Add Goal</button>
+                    </div>
+                    
+                    <div class="goals-grid" id="goalsGrid">
+                        <!-- Goals will be dynamically populated here -->
+                    </div>
+                </div>
+
+                <!-- Analytics Tab -->
+                <div class="tab-content" id="analytics-tab">
+                    <!-- Analytics Sub-tabs -->
+                    <div class="analytics-header">
+                        <h2>Analytics Dashboard</h2>
+                        <div class="analytics-nav">
+                            <button class="analytics-tab analytics-tab--active" data-analytics-tab="overview">Portfolio Overview</button>
+                            <button class="analytics-tab" data-analytics-tab="goal-allocation">Goal Allocation</button>
+                            <button class="analytics-tab" data-analytics-tab="fund-distribution">Fund Distribution</button>
+                            <button class="analytics-tab" data-analytics-tab="timeline">Investment Timeline</button>
+                        </div>
+                    </div>
+
+                    <!-- Portfolio Overview Sub-tab -->
+                    <div class="analytics-content analytics-content--active" id="overview-analytics">
+                        <div class="analytics-row">
+                            <div class="card chart-card">
+                                <div class="card__header">
+                                    <h3>Asset Allocation</h3>
+                                </div>
+                                <div class="card__body">
+                                    <div class="chart-container" style="position: relative; height: 300px;">
+                                        <canvas id="allocationChart"></canvas>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="card chart-card">
+                                <div class="card__header">
+                                    <h3>Goal-wise Distribution</h3>
+                                </div>
+                                <div class="card__body">
+                                    <div class="chart-container" style="position: relative; height: 300px;">
+                                        <canvas id="goalChart"></canvas>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Goal Allocation Sub-tab -->
+                    <div class="analytics-content" id="goal-allocation-analytics">
+                        <div class="analytics-section-header">
+                            <h3>Goal-wise Equity-Debt Allocation</h3>
+                            <p>View the equity and debt percentage breakdown for each of your investment goals</p>
+                        </div>
+                        
+                        <div class="goal-allocation-cards" id="goalAllocationCards">
+                            <!-- Goal allocation cards will be populated here -->
+                        </div>
+                        
+                        <div class="card">
+                            <div class="card__header">
+                                <h3>Goal Allocation Summary</h3>
+                            </div>
+                            <div class="card__body">
+                                <div class="table-container">
+                                    <table class="table" id="goalAllocationTable">
+                                        <thead>
+                                            <tr>
+                                                <th>Goal Name</th>
+                                                <th>Total Invested</th>
+                                                <th>Equity Amount</th>
+                                                <th>Equity %</th>
+                                                <th>Debt Amount</th>
+                                                <th>Debt %</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="goalAllocationTableBody">
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Fund Distribution Sub-tab -->
+                    <div class="analytics-content" id="fund-distribution-analytics">
+                        <div class="analytics-section-header">
+                            <h3>Fund Distribution Across Goals</h3>
+                            <p>Understand how each fund is allocated across your different investment goals</p>
+                        </div>
+                        
+                        <div class="fund-filters">
+                            <button class="btn btn--sm fund-filter-btn fund-filter-btn--active" data-fund-filter="all">All Funds</button>
+                            <button class="btn btn--sm fund-filter-btn" data-fund-filter="equity">Equity Funds</button>
+                            <button class="btn btn--sm fund-filter-btn" data-fund-filter="debt">Debt Funds</button>
+                        </div>
+                        
+                        <div class="fund-distribution-cards" id="fundDistributionCards">
+                            <!-- Fund distribution cards will be populated here -->
+                        </div>
+                        
+                        <div class="card">
+                            <div class="card__header">
+                                <h3>Fund Distribution Summary</h3>
+                            </div>
+                            <div class="card__body">
+                                <div class="table-container">
+                                    <table class="table" id="fundDistributionTable">
+                                        <thead>
+                                            <tr>
+                                                <th>Fund Name</th>
+                                                <th>Type</th>
+                                                <th>Total Amount</th>
+                                                <th>Goal Distribution</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="fundDistributionTableBody">
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Timeline Sub-tab -->
+                    <div class="analytics-content" id="timeline-analytics">
+                        <div class="analytics-row">
+                            <div class="card chart-card chart-card--full">
+                                <div class="card__header">
+                                    <h3>Investment Timeline</h3>
+                                </div>
+                                <div class="card__body">
+                                    <div class="chart-container" style="position: relative; height: 400px;">
+                                        <canvas id="timelineChart"></canvas>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Settings Tab -->
+                <div class="tab-content" id="settings-tab">
+                    <div class="settings-container">
+                        <div class="card">
+                            <div class="card__header">
+                                <h3>Currency Settings</h3>
+                            </div>
+                            <div class="card__body">
+                                <div class="form-group">
+                                    <label class="form-label">EUR to INR Exchange Rate</label>
+                                    <div class="currency-input">
+                                        <input type="number" class="form-control" id="exchangeRateInput" step="0.01" min="0">
+                                        <button class="btn btn--secondary" id="updateRateBtn">Update Rate</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="card">
+                            <div class="card__header">
+                                <h3>Data Management</h3>
+                            </div>
+                            <div class="card__body">
+                                <div class="data-actions">
+                                    <button class="btn btn--primary" id="exportDataBtn">Export Data (JSON)</button>
+                                    <div class="import-section">
+                                        <input type="file" id="importFileInput" accept=".json" style="display: none;">
+                                        <button class="btn btn--secondary" id="importDataBtn">Import Data (JSON)</button>
+                                    </div>
+                                    <button class="btn btn--outline btn--warning" id="clearDataBtn">Clear All Data</button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="card">
+                            <div class="card__header">
+                                <h3>Sample Data</h3>
+                            </div>
+                            <div class="card__body">
+                                <p>Load sample data to get started with the application.</p>
+                                <button class="btn btn--secondary" id="loadSampleDataBtn">Load Sample Data</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <!-- Goal Modal -->
+        <div class="modal hidden" id="goalModal">
+            <div class="modal__overlay" id="goalModalOverlay"></div>
+            <div class="modal__content">
+                <div class="modal__header">
+                    <h3 id="goalModalTitle">Add Goal</h3>
+                    <button class="modal__close" id="goalModalClose">&times;</button>
+                </div>
+                <div class="modal__body">
+                    <form id="goalForm">
+                        <div class="form-group">
+                            <label class="form-label">Goal Name</label>
+                            <input type="text" class="form-control" id="goalName" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Target Amount (₹)</label>
+                            <input type="number" class="form-control" id="goalTarget" min="0" step="1000" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Description</label>
+                            <textarea class="form-control" id="goalDescription" rows="3"></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Color</label>
+                            <input type="color" class="form-control" id="goalColor" value="#32a852">
+                        </div>
+                    </form>
+                </div>
+                <div class="modal__footer">
+                    <button type="button" class="btn btn--secondary" id="goalModalCancel">Cancel</button>
+                    <button type="submit" class="btn btn--primary" id="goalModalSave" form="goalForm">Save Goal</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Investment Edit Modal -->
+        <div class="modal hidden" id="investmentModal">
+            <div class="modal__overlay" id="investmentModalOverlay"></div>
+            <div class="modal__content">
+                <div class="modal__header">
+                    <h3>Edit Investment</h3>
+                    <button class="modal__close" id="investmentModalClose">&times;</button>
+                </div>
+                <div class="modal__body">
+                    <form id="editInvestmentForm">
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label class="form-label">Date</label>
+                                <input type="date" class="form-control" id="editInvestmentDate" required>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Currency</label>
+                                <select class="form-control" id="editInvestmentCurrency" required>
+                                    <option value="INR">INR (₹)</option>
+                                    <option value="EUR">EUR (€)</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Amount</label>
+                            <input type="number" class="form-control" id="editInvestmentAmount" min="0" step="0.01" required>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label class="form-label">Type</label>
+                                <select class="form-control" id="editInvestmentType" required>
+                                    <option value="Equity">Equity</option>
+                                    <option value="Debt">Debt</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Goal</label>
+                                <select class="form-control" id="editInvestmentGoal" required>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Fund Name</label>
+                            <input type="text" class="form-control" id="editFundName" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Notes</label>
+                            <textarea class="form-control" id="editInvestmentNotes" rows="3"></textarea>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal__footer">
+                    <button type="button" class="btn btn--secondary" id="investmentModalCancel">Cancel</button>
+                    <button type="submit" class="btn btn--primary" id="investmentModalSave" form="editInvestmentForm">Save Changes</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Notification -->
+        <div class="notification hidden" id="notification">
+            <div class="notification__content">
+                <span class="notification__message" id="notificationMessage"></span>
+                <button class="notification__close" id="notificationClose">&times;</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="inv_app.js"></script>
+</body>
+</html>
