@@ -1,1 +1,248 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Travel Expense Tracker</title>
+    <link rel="stylesheet" href="trip_style.css">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Header -->
+        <header class="app-header">
+            <div class="container">
+                <h1>Travel Expense Tracker</h1>
+                <div class="header-actions">
+                    <button class="btn btn--outline btn--sm" id="export-btn">Export Data</button>
+                    <button class="btn btn--outline btn--sm" id="import-btn">Import Data</button>
+                    <input type="file" id="file-input" accept=".json" class="hidden">
+                </div>
+            </div>
+        </header>
 
+        <!-- Navigation -->
+        <nav class="app-nav">
+            <div class="container">
+                <div class="nav-tabs">
+                    <button class="nav-tab active" data-tab="trips">Trips</button>
+                    <button class="nav-tab" data-tab="add-expense">Add Expense</button>
+                    <button class="nav-tab" data-tab="annual-view">Annual View</button>
+                </div>
+            </div>
+        </nav>
+
+        <!-- Main Content -->
+        <main class="app-main">
+            <div class="container">
+                <!-- Trips Tab -->
+                <div id="trips-tab" class="tab-content active">
+                    <div class="section-header">
+                        <h2>Your Trips</h2>
+                        <button class="btn btn--primary" id="add-trip-btn">Add New Trip</button>
+                    </div>
+                    <div id="trips-container"></div>
+                </div>
+
+                <!-- Add Expense Tab -->
+                <div id="add-expense-tab" class="tab-content hidden">
+                    <div class="section-header">
+                        <h2>Add Expense</h2>
+                    </div>
+                    <div class="expense-form-container">
+                        <form id="expense-form" class="expense-form">
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label class="form-label" for="expense-trip">Trip</label>
+                                    <select class="form-control" id="expense-trip" required>
+                                        <option value="">Select a trip</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label" for="expense-date">Date</label>
+                                    <input type="date" class="form-control" id="expense-date" required>
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label class="form-label" for="expense-amount">Amount</label>
+                                    <input type="number" class="form-control" id="expense-amount" step="0.01" required>
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label" for="expense-currency">Currency</label>
+                                    <select class="form-control" id="expense-currency" required>
+                                        <option value="EUR">EUR</option>
+                                        <option value="INR">INR</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label class="form-label" for="expense-category">Category</label>
+                                    <select class="form-control" id="expense-category" required>
+                                        <option value="">Select category</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label" for="expense-description">Description</label>
+                                <input type="text" class="form-control" id="expense-description" placeholder="Optional description">
+                            </div>
+                            <div class="currency-conversion" id="currency-conversion" style="display: none;">
+                                <small class="text-secondary">Converted to EUR: <span id="converted-amount">€0.00</span></small>
+                            </div>
+                            <button type="submit" class="btn btn--primary btn--full-width">Add Expense</button>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- Annual View Tab -->
+                <div id="annual-view-tab" class="tab-content hidden">
+                    <div class="section-header">
+                        <h2>Annual Summary</h2>
+                        <select class="form-control year-selector" id="year-selector">
+                            <option value="2025">2025</option>
+                            <option value="2024">2024</option>
+                            <option value="2023">2023</option>
+                        </select>
+                    </div>
+                    <div id="annual-summary-container"></div>
+                </div>
+            </div>
+        </main>
+
+        <!-- Trip Modal -->
+        <div class="modal hidden" id="trip-modal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3 id="trip-modal-title">Add New Trip</h3>
+                    <button class="modal-close" id="close-trip-modal">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <form id="trip-form">
+                        <div class="form-group">
+                            <label class="form-label" for="trip-name">Trip Name</label>
+                            <input type="text" class="form-control" id="trip-name" required placeholder="e.g., Paris Summer Vacation">
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label class="form-label" for="trip-start-date">Start Date</label>
+                                <input type="date" class="form-control" id="trip-start-date" required>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label" for="trip-end-date">End Date</label>
+                                <input type="date" class="form-control" id="trip-end-date" required>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" for="trip-location">Location</label>
+                            <input type="text" class="form-control" id="trip-location" required placeholder="e.g., Paris, France">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" for="trip-budget">Budget (EUR) - Optional</label>
+                            <input type="number" class="form-control" id="trip-budget" step="0.01" placeholder="Optional budget">
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn--secondary" id="cancel-trip">Cancel</button>
+                    <button class="btn btn--primary" id="save-trip">Save Trip</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Trip Detail Modal -->
+        <div class="modal hidden" id="trip-detail-modal">
+            <div class="modal-content modal-large">
+                <div class="modal-header">
+                    <h3 id="trip-detail-title"></h3>
+                    <div class="header-actions">
+                        <button class="btn btn--outline btn--sm" id="bulk-add-btn">Bulk Add Expenses</button>
+                        <button class="modal-close" id="close-trip-detail">&times;</button>
+                    </div>
+                </div>
+                <div class="modal-body">
+                    <div id="trip-detail-content"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Bulk Expense Entry Modal -->
+        <div class="modal hidden" id="bulk-expense-modal">
+            <div class="modal-content modal-xl">
+                <div class="modal-header">
+                    <h3>Bulk Add Expenses</h3>
+                    <button class="modal-close" id="close-bulk-modal">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <div class="bulk-actions">
+                        <button class="btn btn--outline btn--sm" id="add-bulk-row">Add Row</button>
+                        <button class="btn btn--outline btn--sm" id="remove-bulk-row">Remove Row</button>
+                        <div class="bulk-summary">
+                            <span id="bulk-count">3 rows</span> | 
+                            <span id="bulk-total">Total: €0.00</span>
+                        </div>
+                    </div>
+                    <div class="bulk-table-container">
+                        <table class="bulk-table">
+                            <thead>
+                                <tr>
+                                    <th>Date</th>
+                                    <th>Amount</th>
+                                    <th>Currency</th>
+                                    <th>Category</th>
+                                    <th>Description</th>
+                                    <th>EUR Amount</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="bulk-table-body">
+                                <!-- Rows will be dynamically added here -->
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="bulk-validation" id="bulk-validation"></div>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn--secondary" id="cancel-bulk">Cancel</button>
+                    <button class="btn btn--primary" id="save-bulk-expenses">Save All Expenses</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Import Confirmation Modal -->
+        <div class="modal hidden" id="import-modal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3>Import Data</h3>
+                    <button class="modal-close" id="close-import-modal">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <div class="import-preview" id="import-preview"></div>
+                    <div class="form-group">
+                        <label class="form-label">Import Options</label>
+                        <div class="radio-group">
+                            <label class="radio-label">
+                                <input type="radio" name="import-option" value="merge" checked>
+                                Merge with existing data
+                            </label>
+                            <label class="radio-label">
+                                <input type="radio" name="import-option" value="replace">
+                                Replace all existing data
+                            </label>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn--secondary" id="cancel-import">Cancel</button>
+                    <button class="btn btn--primary" id="confirm-import">Import Data</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Toast Notifications -->
+        <div id="toast-container"></div>
+    </div>
+
+    <script src="trip_app.js"></script>
+</body>
+</html>
