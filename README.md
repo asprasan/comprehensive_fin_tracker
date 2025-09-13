@@ -1,2 +1,2 @@
-# comprehensive_fin_tracker
+# Comprehensive financial tracker
 Comprehensive financial tracker
