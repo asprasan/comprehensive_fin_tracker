@@ -426,116 +426,47 @@ class ExpenseTracker {
     }
 
     renderAnnualSummary() {
-        const year = this.annualYear;
-        const monthNames = ['January', 'February', 'March', 'April', 'May', 'June',
-                        'July', 'August', 'September', 'October', 'November', 'December'];
-        
-        let totalYearExpenses = 0;
-        let highestMonth = { month: '', amount: 0 };
-        let monthlyData = [];
-        const monthlyBudget = this.getMonthlyBudget();
-        
-        // Calculate monthly data with cumulative overshoot/undershoot
-        let cumulativeBudget = 0;
-        let cumulativeExpenses = 0;
-        
-        for (let month = 0; month < 12; month++) {
-            const monthTotal = this.getMonthlyTotal(year, month);
-            totalYearExpenses += monthTotal;
-            
-            cumulativeBudget += monthlyBudget;
-            cumulativeExpenses += monthTotal;
-            const cumulativeOvershoot = cumulativeExpenses - cumulativeBudget;
-            
-            if (monthTotal > highestMonth.amount) {
-                highestMonth = { month: monthNames[month], amount: monthTotal };
-            }
-            
-            monthlyData.push({
-                month: monthNames[month],
-                total: monthTotal,
-                budget: monthlyBudget,
-                difference: monthTotal - monthlyBudget,
-                cumulativeOvershoot: cumulativeOvershoot
-            });
-        }
-
-        // Calculate category totals
-        const categoryTotals = {};
-        let topCategory = { name: '', amount: 0 };
-        
-        Object.keys(this.categories).forEach(categoryId => {
-            let categoryTotal = 0;
-            for (let month = 0; month < 12; month++) {
-                categoryTotal += this.getCategoryTotal(categoryId, year, month);
-            }
-            categoryTotals[categoryId] = categoryTotal;
-            
-            if (categoryTotal > topCategory.amount) {
-                topCategory = { name: this.categories[categoryId].name, amount: categoryTotal };
-            }
+        const yearExpenses = this.expenses.filter(expense => {
+            const expenseDate = new Date(expense.date);
+            return expenseDate.getFullYear() === this.annualYear;
         });
+
+        // Calculate summary statistics
+        const totalSpent = yearExpenses.reduce((sum, expense) => 
+            sum + this.convertToEur(expense.price, expense.currency), 0);
+        const monthlyAverage = totalSpent / 12;
+
+        // Monthly totals
+        const monthlyTotals = Array(12).fill(0);
+        const categoryTotals = {};
+        Object.keys(this.categories).forEach(cat => categoryTotals[cat] = 0);
+
+        yearExpenses.forEach(expense => {
+            const month = new Date(expense.date).getMonth();
+            const eurAmount = this.convertToEur(expense.price, expense.currency);
+            monthlyTotals[month] += eurAmount;
+            categoryTotals[expense.category] += eurAmount;
+        });
+
+        // Find highest month and top category
+        const highestMonthIndex = monthlyTotals.indexOf(Math.max(...monthlyTotals));
+        const highestMonthName = new Date(2025, highestMonthIndex).toLocaleDateString('en-US', { month: 'long' });
+        const topCategoryId = Object.keys(categoryTotals).reduce((a, b) => 
+            categoryTotals[a] > categoryTotals[b] ? a : b);
+        const topCategoryName = this.categories[topCategoryId]?.name || '-';
 
         // Update summary cards
-        document.getElementById('totalSpent').textContent = this.formatCurrency(totalYearExpenses);
-        document.getElementById('averageMonthly').textContent = this.formatCurrency(totalYearExpenses / 12);
-        document.getElementById('highestMonth').textContent = `${highestMonth.month} (${this.formatCurrency(highestMonth.amount)})`;
-        document.getElementById('topCategory').textContent = `${topCategory.name} (${this.formatCurrency(topCategory.amount)})`;
+        document.getElementById('annualTotalSpent').textContent = this.formatCurrency(totalSpent, 'EUR');
+        document.getElementById('annualAverage').textContent = this.formatCurrency(monthlyAverage, 'EUR');
+        document.getElementById('highestMonth').textContent = totalSpent > 0 ? 
+            `${highestMonthName} (${this.formatCurrency(monthlyTotals[highestMonthIndex], 'EUR')})` : '-';
+        document.getElementById('topCategory').textContent = totalSpent > 0 ? 
+            `${topCategoryName} (${this.formatCurrency(categoryTotals[topCategoryId], 'EUR')})` : '-';
 
-        // Render monthly breakdown table with cumulative column
-        const tableBody = document.getElementById('monthlyBreakdownBody');
-        tableBody.innerHTML = '';
-        
-        monthlyData.forEach(data => {
-            const isOverBudget = data.difference > 0;
-            const isCumulativeOver = data.cumulativeOvershoot > 0;
-            const row = document.createElement('tr');
-            
-            row.innerHTML = `
-                <td>${data.month}</td>
-                <td>${this.formatCurrency(data.total)}</td>
-                <td>${this.formatCurrency(data.budget)}</td>
-                <td class="${isOverBudget ? 'over-budget-text' : 'under-budget-text'}">
-                    ${isOverBudget ? '+' : ''}${this.formatCurrency(data.difference)}
-                </td>
-                <td class="${isCumulativeOver ? 'over-budget-text' : 'under-budget-text'}">
-                    ${isCumulativeOver ? '+' : ''}${this.formatCurrency(data.cumulativeOvershoot)}
-                </td>
-            `;
-            
-            tableBody.appendChild(row);
-        });
-
-        // Render category breakdown table (unchanged)
-        const categoryTableBody = document.getElementById('categoryBreakdownBody');
-        categoryTableBody.innerHTML = '';
-        
-        Object.keys(this.categories).forEach(categoryId => {
-            const category = this.categories[categoryId];
-            const total = categoryTotals[categoryId];
-            const annualBudget = this.budgets[categoryId] * 12;
-            const difference = total - annualBudget;
-            const isOverBudget = difference > 0;
-            
-            const row = document.createElement('tr');
-            row.innerHTML = `
-                <td>
-                    <span class="category-icon">${category.icon}</span>
-                    ${category.name}
-                </td>
-                <td>${this.formatCurrency(total)}</td>
-                <td>${this.formatCurrency(annualBudget)}</td>
-                <td class="${isOverBudget ? 'over-budget-text' : 'under-budget-text'}">
-                    ${isOverBudget ? '+' : ''}${this.formatCurrency(difference)}
-                </td>
-            `;
-            
-            categoryTableBody.appendChild(row);
-        });
-
-        // Render charts (unchanged)
-        this.renderMonthlyChart(monthlyData);
+        // Render charts
+        this.renderMonthlyChart(monthlyTotals);
         this.renderCategoryChart(categoryTotals);
+        this.renderAnnualTable(monthlyTotals, categoryTotals);
     }
 
     renderMonthlyChart(monthlyTotals) {
