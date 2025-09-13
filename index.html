@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>My Finance Dashboard</title>
+  <link rel="stylesheet" href="style.css"> <!-- reuse your existing CSS -->
+  <style>
+    /* You can add hub-specific styling here */
+    body {
+      text-align: center;
+      padding: 50px;
+    }
+    h1 {
+      margin-bottom: 30px;
+    }
+    .nav-links {
+      display: flex;
+      justify-content: center;
+      gap: 30px;
+      flex-wrap: wrap;
+    }
+    .nav-links a {
+      display: block;
+      padding: 20px 30px;
+      background: #0077cc;
+      color: white;
+      text-decoration: none;
+      border-radius: 8px;
+      font-size: 18px;
+      transition: background 0.3s;
+    }
+    .nav-links a:hover {
+      background: #005fa3;
+    }
+  </style>
+</head>
+<body>
+  <h1>Finance Dashboard</h1>
+  <div class="nav-links">
+    <a href="monthly/index.html">📅 Monthly Expense Tracker</a>
+    <a href="trip/index.html">✈️ Trip Expense Tracker</a>
+    <a href="investments/index.html">📈 Investment Tracker</a>
+  </div>
+</body>
+</html>
