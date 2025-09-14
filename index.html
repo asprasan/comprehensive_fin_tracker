@@ -5,7 +5,6 @@
   <title>My Finance Dashboard</title>
   <link rel="stylesheet" href="style.css"> <!-- reuse your existing CSS -->
   <style>
-    /* You can add hub-specific styling here */
     body {
       text-align: center;
       padding: 50px;
@@ -18,6 +17,7 @@
       justify-content: center;
       gap: 30px;
       flex-wrap: wrap;
+      margin-bottom: 40px;
     }
     .nav-links a {
       display: block;
@@ -32,14 +32,74 @@
     .nav-links a:hover {
       background: #005fa3;
     }
+    .description {
+      max-width: 700px;
+      margin: 0 auto 60px auto;
+      font-size: 1.1em;
+      line-height: 1.6;
+      color: var(--color-text-secondary);
+    }
+    footer {
+      background: var(--color-surface);
+      border-top: 1px solid var(--color-card-border);
+      padding: 20px;
+      font-size: 0.9em;
+      color: var(--color-text-secondary);
+    }
+    footer a {
+      margin: 0 10px;
+    }
   </style>
 </head>
 <body>
   <h1>Finance Dashboard</h1>
+
+  <div class="description">
+    <p>
+      The Finance Dashboard is a personal tool to track expenses, monitor investments,
+      and manage budgets more effectively. It provides a simple interface for 
+      organizing monthly and trip expenses, while also offering insights into 
+      long-term financial goals.
+    </p>
+    <p>
+      This dashboard is mainly divided into tracking <a href="monthly/index.html">📅 Monthly Expenses</a>,
+      tracking <a href="trip/index.html">✈️ Trip Expenses</a>, and 
+      monitoring <a href="investments/index.html">📈 Investments</a>.
+      Each page provides an annual overview to track expenses.
+      Additionally, the investments can be categorized into individual goals. 
+      And you can also track goal-wise equity-debt allocation which can be helpful in rebalancing the portfolio.
+    </p>
+
+    <p>
+      The data that you enter here are only available to you locally on the browser.
+      They are not saved anywhere on the internet and no one else can see them.
+      You can export your data to a json file and import it later.
+    </p>
+    <p>
+      For feedback, issues, and contributions, please checkout the 
+      <a href="https://github.com/asprasan/comprehensive_fin_tracker" target="_blank">GitHub Project</a>.
+
+      The existing data that you see in the pages are just sample data and do not reflect anyone's current financial situation.
+    </p>
+  </div>
+
   <div class="nav-links">
     <a href="monthly/index.html">📅 Monthly Expense Tracker</a>
     <a href="trip/index.html">✈️ Trip Expense Tracker</a>
     <a href="investments/index.html">📈 Investment Tracker</a>
   </div>
+
+  <footer>
+    <p>
+      &copy; 2025 Prasan Shedligeri — Licensed under 
+      <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank" rel="noopener noreferrer">
+        CC BY-NC-SA 4.0
+      </a>
+    </p>
+    <p>
+      <a href="https://github.com/asprasan/comprehensive_fin_tracker" target="_blank">GitHub Project</a> |
+      <a href="https://www.linkedin.com/in/prasan-shedligeri/" target="_blank">LinkedIn</a>
+    </p>
+  </footer>
 </body>
 </html>
