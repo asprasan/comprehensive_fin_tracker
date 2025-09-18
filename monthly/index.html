@@ -3,240 +3,335 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Advanced Expense Tracker</title>
-    <link rel="stylesheet" href="exp_style.css">
+    <title>Complete Expense Tracker</title>
+    <link rel="stylesheet" href="style.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
-    <header class="header">
-        <div class="container">
-            <div class="header-content">
-                <h1>💰 Advanced Expense Tracker</h1>
-                
-                <!-- Navigation Tabs -->
-                <nav class="main-nav">
-                    <button id="monthlyViewTab" class="nav-tab active">Monthly View</button>
-                    <button id="annualSummaryTab" class="nav-tab">Annual Summary</button>
-                    <button id="currencySettingsTab" class="nav-tab">Currency Settings</button>
-                </nav>
-                
-                <!-- Monthly View Controls -->
-                <div id="monthlyControls" class="header-controls">
-                    <div class="month-selector">
-                        <select id="monthSelect" class="form-control">
-                            <option value="0">January</option>
-                            <option value="1">February</option>
-                            <option value="2">March</option>
-                            <option value="3">April</option>
-                            <option value="4">May</option>
-                            <option value="5">June</option>
-                            <option value="6">July</option>
-                            <option value="7">August</option>
-                            <option value="8" selected>September</option>
-                            <option value="9">October</option>
-                            <option value="10">November</option>
-                            <option value="11">December</option>
-                        </select>
-                        <select id="yearSelect" class="form-control">
-                            <option value="2023">2023</option>
-                            <option value="2024">2024</option>
-                            <option value="2025" selected>2025</option>
-                            <option value="2026">2026</option>
-                        </select>
-                    </div>
-                    <div class="total-overview">
-                        <div class="total-item">
-                            <span class="label">Total Budget:</span>
-                            <span id="totalBudget" class="amount">€400.00</span>
-                        </div>
-                        <div class="total-item">
-                            <span class="label">Total Spent:</span>
-                            <span id="totalSpent" class="amount">€0.00</span>
-                        </div>
-                        <div class="total-item">
-                            <span class="label">Remaining:</span>
-                            <span id="totalRemaining" class="amount">€400.00</span>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Annual Summary Controls -->
-                <div id="annualControls" class="header-controls hidden">
-                    <div class="annual-selector">
-                        <select id="annualYearSelect" class="form-control">
-                            <option value="2023">2023</option>
-                            <option value="2024">2024</option>
-                            <option value="2025" selected>2025</option>
-                            <option value="2026">2026</option>
-                        </select>
-                        <button id="exportAnnualBtn" class="btn btn--outline">📊 Export Annual Data</button>
-                    </div>
+    <div class="app-container">
+        <!-- Header -->
+        <header class="header">
+            <div class="container">
+                <h1>💰 Complete Expense Tracker</h1>
+                <div class="date-controls">
+                    <select id="monthSelect" class="form-control">
+                        <option value="0">January</option>
+                        <option value="1">February</option>
+                        <option value="2">March</option>
+                        <option value="3">April</option>
+                        <option value="4">May</option>
+                        <option value="5">June</option>
+                        <option value="6">July</option>
+                        <option value="7">August</option>
+                        <option value="8" selected>September</option>
+                        <option value="9">October</option>
+                        <option value="10">November</option>
+                        <option value="11">December</option>
+                    </select>
+                    <select id="yearSelect" class="form-control">
+                        <option value="2023">2023</option>
+                        <option value="2024">2024</option>
+                        <option value="2025" selected>2025</option>
+                        <option value="2026">2026</option>
+                    </select>
                 </div>
             </div>
-        </div>
-    </header>
+        </header>
 
-    <main class="main">
-        <div class="container">
-            <!-- Monthly View Section -->
-            <section id="monthlyView" class="view-section">
-                <div class="action-bar">
-                    <button id="addExpenseBtn" class="btn btn--primary">
-                        ➕ Add Multiple Expenses
-                    </button>
+        <!-- Navigation Tabs -->
+        <nav class="tab-nav">
+            <div class="container">
+                <button class="tab-btn active" data-tab="monthly">Monthly View</button>
+                <button class="tab-btn" data-tab="annual">Annual Summary</button>
+                <button class="tab-btn" data-tab="currency">Currency Settings</button>
+            </div>
+        </nav>
+
+        <!-- Main Content -->
+        <main class="main">
+            <div class="container">
+                <!-- Monthly View Tab -->
+                <div id="monthlyTab" class="tab-content active">
+                    <div class="monthly-header">
+                        <div class="totals-overview">
+                            <div class="total-card">
+                                <div class="total-label">Total Budget</div>
+                                <div id="totalBudget" class="total-amount clickable">€400.00</div>
+                            </div>
+                            <div class="total-card">
+                                <div class="total-label">Total Spent</div>
+                                <div id="totalSpent" class="total-amount">€0.00</div>
+                            </div>
+                            <div class="total-card">
+                                <div class="total-label">Remaining</div>
+                                <div id="totalRemaining" class="total-amount">€400.00</div>
+                            </div>
+                        </div>
+                        <div class="action-buttons">
+                            <button id="setBudgetsBtn" class="btn btn--primary">⚙️ Set All Budgets</button>
+                            <button id="addExpenseBtn" class="btn btn--primary">➕ Add Expense</button>
+                            <button id="bulkAddBtn" class="btn btn--secondary">📝 Add Expenses</button>
+                        </div>
+                    </div>
+
                     <div class="data-actions">
-                        <button id="exportBtn" class="btn btn--outline">
-                            📥 Export Data
-                        </button>
-                        <label class="btn btn--outline import-btn">
+                        <button id="exportBtn" class="btn btn--outline">📥 Export Monthly</button>
+                        <label class="btn btn--outline">
                             📤 Import Data
                             <input type="file" id="importFile" accept=".json" style="display: none;">
                         </label>
                     </div>
+
+                    <div class="categories-grid" id="categoriesGrid">
+                        <!-- Categories will be populated by JavaScript -->
+                    </div>
                 </div>
 
-                <div class="categories-grid" id="categoriesGrid">
-                    <!-- Categories will be populated by JavaScript -->
-                </div>
-            </section>
+                <!-- Annual Summary Tab -->
+                <div id="annualTab" class="tab-content">
+                    <div class="annual-header">
+                        <h2>Annual Summary - <span id="currentYear">2025</span></h2>
+                        <div class="annual-actions">
+                            <button id="exportAnnualBtn" class="btn btn--primary">📥 Export Annual Data</button>
+                        </div>
+                    </div>
 
-            <!-- Annual Summary Section -->
-            <section id="annualView" class="view-section hidden">
-                <div class="annual-summary">
                     <div class="summary-cards">
                         <div class="summary-card">
-                            <h3>Total Spent</h3>
+                            <div class="summary-label">Total Spent</div>
                             <div id="annualTotalSpent" class="summary-value">€0.00</div>
                         </div>
                         <div class="summary-card">
-                            <h3>Average Monthly</h3>
+                            <div class="summary-label">Average Monthly</div>
                             <div id="annualAverage" class="summary-value">€0.00</div>
                         </div>
                         <div class="summary-card">
-                            <h3>Highest Month</h3>
-                            <div id="highestMonth" class="summary-value">-</div>
+                            <div class="summary-label">Highest Month</div>
+                            <div id="annualHighest" class="summary-value">€0.00</div>
                         </div>
                         <div class="summary-card">
-                            <h3>Top Category</h3>
-                            <div id="topCategory" class="summary-value">-</div>
+                            <div class="summary-label">Top Category</div>
+                            <div id="topCategory" class="summary-value">None</div>
                         </div>
                     </div>
 
-                    <div class="charts-container">
-                        <div class="chart-section">
-                            <h3>Monthly Expenses</h3>
-                            <div class="chart-container" style="position: relative; height: 300px;">
-                                <canvas id="monthlyChart"></canvas>
+                    <div class="annual-content">
+                        <div class="annual-tables">
+                            <div class="table-container">
+                                <h3>Monthly Breakdown</h3>
+                                <table id="monthlyBreakdown" class="data-table">
+                                    <thead>
+                                        <tr>
+                                            <th>Month</th>
+                                            <th>Total</th>
+                                            <th>Budget</th>
+                                            <th>Over/Under</th>
+                                            <th>Cumulative Over/Under</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <!-- Populated by JavaScript -->
+                                    </tbody>
+                                </table>
                             </div>
-                        </div>
-                        <div class="chart-section">
-                            <h3>Category Breakdown</h3>
-                            <div class="chart-container" style="position: relative; height: 300px;">
-                                <canvas id="categoryChart"></canvas>
-                            </div>
-                        </div>
-                    </div>
 
-                    <div class="annual-table-section">
-                        <h3>Monthly Breakdown</h3>
-                        <div class="table-wrapper">
-                            <table id="annualTable" class="annual-table">
-                                <thead>
-                                    <tr>
-                                        <th>Month</th>
-                                        <th>Groceries</th>
-                                        <th>Lifestyle</th>
-                                        <th>Once-in-a-while</th>
-                                        <th>Unexpected</th>
-                                        <th>Total</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="annualTableBody">
-                                    <!-- Will be populated by JavaScript -->
-                                </tbody>
-                            </table>
+                            <div class="table-container">
+                                <h3>Category Breakdown</h3>
+                                <table id="categoryBreakdown" class="data-table">
+                                    <thead>
+                                        <tr>
+                                            <th>Category</th>
+                                            <th>Total</th>
+                                            <th>Budget</th>
+                                            <th>Over/Under</th>
+                                            <th>Avg Monthly</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <!-- Populated by JavaScript -->
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                        <div class="charts-container">
+                            <div class="chart-container" style="position: relative; height: 300px;">
+                                <canvas id="monthlyTrendChart"></canvas>
+                            </div>
+                            <div class="chart-container" style="position: relative; height: 300px;">
+                                <canvas id="categoryDistributionChart"></canvas>
+                            </div>
                         </div>
                     </div>
                 </div>
-            </section>
-        </div>
-    </main>
 
-    <!-- Bulk Add Expense Modal -->
+                <!-- Currency Settings Tab -->
+                <div id="currencyTab" class="tab-content">
+                    <div class="currency-header">
+                        <h2>Currency Settings</h2>
+                    </div>
+                    
+                    <div class="currency-content">
+                        <div class="card">
+                            <div class="card__body">
+                                <div class="form-group">
+                                    <label class="form-label">EUR to INR Conversion Rate</label>
+                                    <input type="number" id="conversionRate" class="form-control" value="90" step="0.01" min="0">
+                                    <small class="form-help">Enter current EUR to INR exchange rate</small>
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label class="form-label">Default Currency</label>
+                                    <select id="defaultCurrency" class="form-control">
+                                        <option value="EUR" selected>EUR (€)</option>
+                                        <option value="INR">INR (₹)</option>
+                                    </select>
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label class="form-label">Last Updated</label>
+                                    <input type="text" id="lastUpdated" class="form-control" readonly>
+                                </div>
+                                
+                                <button id="saveCurrencyBtn" class="btn btn--primary">Save Settings</button>
+                            </div>
+                        </div>
+                        
+                        <div class="card">
+                            <div class="card__body">
+                                <h3>Currency Converter</h3>
+                                <div class="converter-row">
+                                    <div class="form-group">
+                                        <label class="form-label">Amount</label>
+                                        <input type="number" id="converterAmount" class="form-control" step="0.01">
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="form-label">From</label>
+                                        <select id="converterFrom" class="form-control">
+                                            <option value="EUR">EUR</option>
+                                            <option value="INR">INR</option>
+                                        </select>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="form-label">To</label>
+                                        <select id="converterTo" class="form-control">
+                                            <option value="INR">INR</option>
+                                            <option value="EUR">EUR</option>
+                                        </select>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="form-label">Result</label>
+                                        <input type="text" id="converterResult" class="form-control" readonly>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Single Expense Modal -->
     <div id="expenseModal" class="modal hidden">
+        <div class="modal-overlay"></div>
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="expenseModalTitle">Add New Expense</h2>
+                <button class="close-btn" id="closeExpenseModal">×</button>
+            </div>
+            <form id="expenseForm" class="modal-body">
+                <div class="form-group">
+                    <label class="form-label">Category</label>
+                    <select id="categorySelect" class="form-control" required>
+                        <option value="">Select category...</option>
+                        <option value="groceries">🛒 Groceries</option>
+                        <option value="lifestyle">🎉 Lifestyle</option>
+                        <option value="once-in-a-while">⏰ Once-in-a-while Items</option>
+                        <option value="unexpected">❗ Unexpected</option>
+                    </select>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label">Date <span class="required">*</span></label>
+                        <input type="date" id="dateInput" class="form-control" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Price <span class="required">*</span></label>
+                        <div class="price-input">
+                            <input type="number" id="priceInput" class="form-control" step="0.01" min="0" required>
+                            <select id="currencySelect" class="form-control">
+                                <option value="EUR">EUR</option>
+                                <option value="INR">INR</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Store</label>
+                    <input type="text" id="storeInput" class="form-control">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Item</label>
+                    <input type="text" id="itemInput" class="form-control">
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label">Quantity</label>
+                        <input type="number" id="quantityInput" class="form-control" step="0.01" min="0">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Unit</label>
+                        <input type="text" id="unitInput" class="form-control">
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn--outline" id="cancelExpense">Cancel</button>
+                    <button type="submit" class="btn btn--primary">Save Expense</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Bulk Expense Modal -->
+    <div id="bulkExpenseModal" class="modal hidden">
         <div class="modal-overlay"></div>
         <div class="modal-content bulk-modal">
             <div class="modal-header">
                 <h2>Add Multiple Expenses</h2>
-                <button id="closeModal" class="close-btn">✕</button>
+                <button class="close-btn" id="closeBulkModal">×</button>
             </div>
             <div class="modal-body">
-                <div class="bulk-expense-table-wrapper">
-                    <table class="bulk-expense-table">
+                <div class="bulk-instructions">
+                    <p>Fill in expenses below. <span class="required">Date*</span> and <span class="required">Price*</span> are required.</p>
+                </div>
+                <div class="bulk-table-container">
+                    <table id="bulkExpenseTable" class="bulk-table">
                         <thead>
                             <tr>
                                 <th>Date <span class="required">*</span></th>
+                                <th>Price <span class="required">*</span></th>
+                                <th>Currency</th>
                                 <th>Category</th>
                                 <th>Store</th>
                                 <th>Item</th>
-                                <th>Quantity</th>
+                                <th>Qty</th>
                                 <th>Unit</th>
-                                <th>Price <span class="required">*</span></th>
-                                <th>Currency</th>
-                                <th>Actions</th>
+                                <th>Action</th>
                             </tr>
                         </thead>
-                        <tbody id="bulkExpenseRows">
-                            <!-- Rows will be populated by JavaScript -->
+                        <tbody id="bulkTableBody">
+                            <!-- Populated by JavaScript -->
                         </tbody>
                     </table>
                 </div>
                 <div class="bulk-actions">
-                    <button id="addRowBtn" class="btn btn--outline">+ Add Row</button>
+                    <button type="button" id="addRowBtn" class="btn btn--outline">+ Add Row</button>
+                    <button type="button" id="removeRowBtn" class="btn btn--outline">- Remove Row</button>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" id="cancelBulkBtn" class="btn btn--outline">Cancel</button>
-                    <button type="button" id="saveAllExpensesBtn" class="btn btn--primary">Save All Expenses</button>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Currency Settings Modal -->
-    <div id="currencyModal" class="modal hidden">
-        <div class="modal-overlay"></div>
-        <div class="modal-content">
-            <div class="modal-header">
-                <h2>Currency Settings</h2>
-                <button id="closeCurrencyModal" class="close-btn">✕</button>
-            </div>
-            <div class="modal-body">
-                <div class="form-group">
-                    <label class="form-label">EUR to INR Conversion Rate</label>
-                    <input type="number" id="conversionRate" class="form-control" step="0.01" min="0">
-                    <small class="form-help">Current rate used for converting INR expenses to EUR</small>
-                </div>
-                
-                <div class="form-group">
-                    <label class="form-label">Default Currency</label>
-                    <select id="defaultCurrency" class="form-control">
-                        <option value="EUR">EUR (€)</option>
-                        <option value="INR">INR (₹)</option>
-                    </select>
-                </div>
-
-                <div class="form-group">
-                    <label class="form-label">Last Updated</label>
-                    <input type="text" id="lastUpdated" class="form-control" readonly>
-                </div>
-
-                <div class="info-box">
-                    <p><strong>Note:</strong> All budgets and final totals are displayed in EUR. INR expenses will be automatically converted using the rate above.</p>
-                </div>
-
-                <div class="modal-footer">
-                    <button type="button" id="cancelCurrencyBtn" class="btn btn--outline">Cancel</button>
-                    <button type="button" id="saveCurrencyBtn" class="btn btn--primary">Save Settings</button>
+                    <button type="button" class="btn btn--outline" id="cancelBulk">Cancel</button>
+                    <button type="button" class="btn btn--primary" id="saveBulkExpenses">Save All Expenses</button>
                 </div>
             </div>
         </div>
@@ -247,34 +342,26 @@
         <div class="modal-overlay"></div>
         <div class="modal-content">
             <div class="modal-header">
-                <h2>Set Monthly Budgets (EUR)</h2>
-                <button id="closeBudgetModal" class="close-btn">✕</button>
+                <h2>Edit Monthly Budgets</h2>
+                <button class="close-btn" id="closeBudgetModal">×</button>
             </div>
             <form id="budgetForm" class="modal-body">
                 <div id="budgetInputs">
-                    <!-- Budget inputs will be populated by JavaScript -->
+                    <!-- Populated by JavaScript -->
                 </div>
                 <div class="modal-footer">
-                    <button type="button" id="cancelBudgetBtn" class="btn btn--outline">Cancel</button>
-                    <button type="submit" class="btn btn--primary">Save Budgets</button>
+                    <button type="button" class="btn btn--outline" id="cancelBudget">Cancel</button>
+                    <button type="submit" class="btn btn--primary">Save Changes</button>
                 </div>
             </form>
         </div>
     </div>
 
-    <!-- Success/Error Messages -->
-    <div id="messageContainer" class="message-container hidden">
-        <div id="messageContent" class="message"></div>
+    <!-- Message Toast -->
+    <div id="messageToast" class="toast hidden">
+        <div id="messageContent"></div>
     </div>
 
-    <!-- Loading Overlay -->
-    <div id="loadingOverlay" class="loading-overlay hidden">
-        <div class="loading-spinner">
-            <div class="spinner"></div>
-            <p>Processing...</p>
-        </div>
-    </div>
-
-    <script src="exp_app.js"></script>
+    <script src="app.js"></script>
 </body>
 </html>
